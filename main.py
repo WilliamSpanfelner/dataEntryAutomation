@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+from fill_form import FillForm
 
 # Search Zillow for San Francisco rentals < $3k with 1 bedroom get:
 # - price address and url
@@ -95,19 +96,29 @@ properties = []
 # Extract data to the list
 for card in cards:
     rent = ''
+    address = ''
+    url = ''
+
     bs4_rent = card.select("div.list-card-price")
+    bs4_address = card.select("address")
+    bs4_url = card.select("a.list-card-link")
+
     if bs4_rent:
         rent = extract_rent_from(bs4_rent)
 
-    address = ''
-    bs4_address = card.select("address")
     if bs4_address:
         address = extract_address_from(bs4_address, rent)
 
-    url = ''
-    bs4_url = card.select("a.list-card-link")
     if bs4_url:
         url = extract_url_from(bs4_url)
 
     if rent and address and url:
         properties.append((rent, address, url))
+
+
+
+fillform = FillForm()
+
+fillform.open_data_entry_form()
+
+fillform.add_data_to_form(properties)
